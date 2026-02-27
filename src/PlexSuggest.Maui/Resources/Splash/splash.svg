@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Plex play triangle - centered and prominent -->
+  <polygon points="176,112 176,400 400,256" fill="#FFFFFF"/>
+  <!-- Shiny sparkle - top right of triangle -->
+  <g transform="translate(370,110)">
+    <path d="M0,-36 L7,-7 L36,0 L7,7 L0,36 L-7,7 L-36,0 L-7,-7 Z" fill="#E5A00D"/>
+  </g>
+  <!-- Shiny sparkle - small -->
+  <g transform="translate(326,170)">
+    <path d="M0,-16 L3,-3 L16,0 L3,3 L0,16 L-3,3 L-16,0 L-3,-3 Z" fill="#E5A00D" opacity="0.8"/>
+  </g>
+  <!-- Shiny sparkle - bottom left -->
+  <g transform="translate(160,385)">
+    <path d="M0,-18 L4,-4 L18,0 L4,4 L0,18 L-4,4 L-18,0 L-4,-4 Z" fill="#E5A00D" opacity="0.65"/>
+  </g>
+</svg>

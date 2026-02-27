@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net10.0-ios;net10.0-android</TargetFrameworks>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>PlexSuggest.Maui</RootNamespace>
+        <LangVersion>14</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <UseMaui>true</UseMaui>
+        <SingleProject>true</SingleProject>
+
+        <ApplicationTitle>PlexSuggest</ApplicationTitle>
+        <ApplicationId>com.shinyorg.plexsuggest</ApplicationId>
+        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+        <ApplicationVersion>1</ApplicationVersion>
+
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">16.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <MtouchExtraArgs>-v -v -v -v</MtouchExtraArgs>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#282A2D" />
+        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#282A2D" BaseSize="256,256" />
+        <MauiFont Include="Resources\Fonts\*" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.31" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+        <PackageReference Include="CommunityToolkit.Maui" Version="14.0.0" />
+        <PackageReference Include="Redth.MauiDevFlow.Agent" Version="0.11.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\PlexSuggest.Core\PlexSuggest.Core.csproj" />
+    </ItemGroup>
+
+</Project>

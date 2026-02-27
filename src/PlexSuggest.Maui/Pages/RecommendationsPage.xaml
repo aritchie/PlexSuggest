@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:PlexSuggest.Maui.ViewModels"
+             xmlns:rec="clr-namespace:PlexSuggest.Core.Recommendations;assembly=PlexSuggest.Core"
+             xmlns:local="clr-namespace:PlexSuggest.Maui"
+             x:Class="PlexSuggest.Maui.Pages.RecommendationsPage"
+             x:DataType="vm:RecommendationsViewModel"
+             Title="{Binding Category.Name}">
+
+    <Grid RowDefinitions="*" Padding="0">
+
+        <!-- Main list -->
+        <CollectionView ItemsSource="{Binding Items}"
+                        SelectionMode="None"
+                        Margin="16,8">
+            <CollectionView.Header>
+                <VerticalStackLayout Spacing="4" Margin="0,8,0,12">
+                    <Label Text="{Binding Category.Name}"
+                           Style="{StaticResource HeaderLabel}" />
+                    <Label Text="{Binding Category.Description}"
+                           Style="{StaticResource SubheaderLabel}" />
+                </VerticalStackLayout>
+            </CollectionView.Header>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="rec:ScoredItem">
+                    <Frame Style="{StaticResource CardFrame}" Margin="0,4">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:RecommendationsViewModel}}, Path=SelectItemCommand}"
+                                CommandParameter="{Binding .}" />
+                        </Frame.GestureRecognizers>
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12">
+                            <Label Text="{Binding Item.Title}"
+                                   FontSize="16" FontFamily="OpenSansSemibold"
+                                   Grid.ColumnSpan="2" />
+                            <HorizontalStackLayout Grid.Row="1" Spacing="12">
+                                <Label Text="{Binding Item.Year}" Style="{StaticResource SubheaderLabel}" />
+                                <Label Style="{StaticResource RatingLabel}">
+                                    <Label.Text>
+                                        <Binding Path="Item.EffectiveRating" StringFormat="{}{0:F1}/10" />
+                                    </Label.Text>
+                                </Label>
+                            </HorizontalStackLayout>
+                            <Label Grid.Row="1" Grid.Column="1"
+                                   Style="{StaticResource ScoreLabel}"
+                                   VerticalOptions="Center">
+                                <Label.Text>
+                                    <Binding Path="Score" StringFormat="{}Score: {0:F0}" />
+                                </Label.Text>
+                            </Label>
+                            <Label Grid.Row="2" Grid.ColumnSpan="2"
+                                   Text="{Binding Reason}"
+                                   Style="{StaticResource SubheaderLabel}"
+                                   LineBreakMode="TailTruncation" />
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Detail overlay -->
+        <Grid IsVisible="{Binding ShowDetail}"
+              BackgroundColor="#CC1A1A2E"
+              Padding="20">
+            <Frame Style="{StaticResource CardFrame}"
+                   VerticalOptions="Center"
+                   MaximumWidthRequest="500"
+                   HorizontalOptions="Center">
+                <ScrollView>
+                    <VerticalStackLayout Spacing="8"
+                                         x:DataType="vm:RecommendationsViewModel">
+
+                        <Label Text="{Binding SelectedItem.Item.Title}"
+                               Style="{StaticResource HeaderLabel}" />
+
+                        <HorizontalStackLayout Spacing="16">
+                            <Label Text="{Binding SelectedItem.Item.Year, StringFormat='Year: {0}'}" />
+                            <Label Style="{StaticResource RatingLabel}"
+                                   Text="{Binding SelectedItem.Item.EffectiveRating, StringFormat='Rating: {0:F1}/10'}" />
+                        </HorizontalStackLayout>
+
+                        <Label Text="{Binding SelectedItem.Item.ContentRating, StringFormat='Content Rating: {0}'}"
+                               Style="{StaticResource SubheaderLabel}" />
+
+                        <Label TextColor="{StaticResource PlexAccent}"
+                               FontSize="13">
+                            <Label.Text>
+                                <Binding Path="SelectedItem.Item.Genre"
+                                         Converter="{x:Static local:Converters.TagList}" />
+                            </Label.Text>
+                        </Label>
+
+                        <Label Style="{StaticResource SubheaderLabel}">
+                            <Label.Text>
+                                <Binding Path="SelectedItem.Item.Director"
+                                         Converter="{x:Static local:Converters.TagList}"
+                                         ConverterParameter="Director: " />
+                            </Label.Text>
+                        </Label>
+
+                        <Label Style="{StaticResource SubheaderLabel}">
+                            <Label.Text>
+                                <Binding Path="SelectedItem.Item.Role"
+                                         Converter="{x:Static local:Converters.TagList}"
+                                         ConverterParameter="Cast: " />
+                            </Label.Text>
+                        </Label>
+
+                        <BoxView HeightRequest="1" Color="{StaticResource PlexCard}" />
+
+                        <Label Text="{Binding SelectedItem.Score, StringFormat='Score: {0:F0}/100'}"
+                               Style="{StaticResource ScoreLabel}" />
+
+                        <Label Text="{Binding SelectedItem.Reason}"
+                               TextColor="{StaticResource PlexTextSecondary}" />
+
+                        <BoxView HeightRequest="1" Color="{StaticResource PlexCard}" />
+
+                        <Label Text="{Binding SelectedItem.Item.Summary}"
+                               LineBreakMode="WordWrap"
+                               FontSize="13" />
+
+                        <Button Text="Close"
+                                Command="{Binding CloseDetailCommand}"
+                                Margin="0,8,0,0" />
+                    </VerticalStackLayout>
+                </ScrollView>
+            </Frame>
+        </Grid>
+
+    </Grid>
+
+</ContentPage>

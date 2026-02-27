@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PlexSuggest.Core/PlexSuggest.Core.csproj" />
+    <Project Path="src/PlexSuggest.Cli/PlexSuggest.Cli.csproj" />
+    <Project Path="src/PlexSuggest.Maui/PlexSuggest.Maui.csproj" />
+  </Folder>
+</Solution>

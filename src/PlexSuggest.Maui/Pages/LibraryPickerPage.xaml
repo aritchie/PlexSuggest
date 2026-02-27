@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:PlexSuggest.Maui.ViewModels"
+             xmlns:models="clr-namespace:PlexSuggest.Core.Plex.Models;assembly=PlexSuggest.Core"
+             x:Class="PlexSuggest.Maui.Pages.LibraryPickerPage"
+             x:DataType="vm:LibraryPickerViewModel"
+             Title="Select Library">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="20">
+
+        <Label Text="Choose a Library"
+               Style="{StaticResource HeaderLabel}"
+               Margin="0,0,0,12" />
+
+        <CollectionView Grid.Row="1"
+                         ItemsSource="{Binding Sections}"
+                         SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:LibrarySection">
+                    <Frame Style="{StaticResource CardFrame}" Margin="0,4">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:LibraryPickerViewModel}}, Path=SelectSectionCommand}"
+                                CommandParameter="{Binding .}" />
+                        </Frame.GestureRecognizers>
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding Title}" FontSize="18"
+                                   FontFamily="OpenSansSemibold" />
+                            <Label Text="{Binding Type}"
+                                   Style="{StaticResource SubheaderLabel}" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <VerticalStackLayout Grid.Row="2" Spacing="8" Margin="0,12,0,0">
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}" />
+            <Label Text="{Binding StatusMessage}"
+                   Style="{StaticResource SubheaderLabel}"
+                   HorizontalOptions="Center" />
+        </VerticalStackLayout>
+
+    </Grid>
+
+</ContentPage>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Color x:Key="PlexAccent">#00BFF3</Color>
+    <Color x:Key="PlexOrange">#E5A00D</Color>
+    <Color x:Key="PlexSuccess">#00C853</Color>
+    <Color x:Key="PlexError">#FF5252</Color>
+    <Color x:Key="PlexDark">#1A1A2E</Color>
+    <Color x:Key="PlexSurface">#16213E</Color>
+    <Color x:Key="PlexCard">#0F3460</Color>
+    <Color x:Key="PlexMuted">#808080</Color>
+    <Color x:Key="PlexText">#ECEFF1</Color>
+    <Color x:Key="PlexTextSecondary">#B0BEC5</Color>
+
+</ResourceDictionary>
