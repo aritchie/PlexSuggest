@@ -1,7 +1,10 @@
 <Solution>
-  <Folder Name="/src/">
-    <Project Path="src/PlexSuggest.Core/PlexSuggest.Core.csproj" />
-    <Project Path="src/PlexSuggest.Cli/PlexSuggest.Cli.csproj" />
-    <Project Path="src/PlexSuggest.Maui/PlexSuggest.Maui.csproj" />
+  <Folder Name="/Solution/">
+    <File Path=".github\workflows\build-android.yml" />
+    <File Path=".github\workflows\build-ios.yml" />
+    <File Path="README.md" />
   </Folder>
+  <Project Path="src/PlexSuggest.Cli/PlexSuggest.Cli.csproj" />
+  <Project Path="src/PlexSuggest.Core/PlexSuggest.Core.csproj" />
+  <Project Path="src/PlexSuggest.Maui/PlexSuggest.Maui.csproj" />
 </Solution>

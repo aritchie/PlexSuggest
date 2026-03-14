@@ -11,7 +11,7 @@
         <SingleProject>true</SingleProject>
 
         <ApplicationTitle>PlexSuggest</ApplicationTitle>
-        <ApplicationId>com.shinyorg.plexsuggest</ApplicationId>
+        <ApplicationId>com.shinysoft.plexsuggest</ApplicationId>
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
         <ApplicationVersion>1</ApplicationVersion>
 
