@@ -10,7 +10,7 @@
         <UseMaui>true</UseMaui>
         <SingleProject>true</SingleProject>
 
-        <ApplicationTitle>PlexSuggest</ApplicationTitle>
+        <ApplicationTitle>PLEX Suggest</ApplicationTitle>
         <ApplicationId>com.shinysoft.plexsuggest</ApplicationId>
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
         <ApplicationVersion>1</ApplicationVersion>
