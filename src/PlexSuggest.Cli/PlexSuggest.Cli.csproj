@@ -1,22 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net10.0</TargetFramework>
-    <LangVersion>14</LangVersion>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <PackAsTool>true</PackAsTool>
-    <ToolCommandName>plexsuggest</ToolCommandName>
-    <PackageId>PlexSuggest</PackageId>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <LangVersion>14</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>plexsuggest</ToolCommandName>
+        <PackageId>PlexSuggest</PackageId>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="XenoAtom.Terminal.UI" Version="1.1.1" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="XenoAtom.Terminal.UI" Version="1.1.1"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\PlexSuggest.Core\PlexSuggest.Core.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\PlexSuggest.Core\PlexSuggest.Core.csproj"/>
+    </ItemGroup>
 
 </Project>

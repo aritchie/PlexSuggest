@@ -37,13 +37,13 @@ public class TasteProfile
             var recency = 1.0 / (1.0 + daysSince / 180.0);
 
             // Genre weights
-            foreach (var genre in item.Genre)
+            foreach (var genre in item.Genres)
             {
                 AddWeight(profile.GenreWeights, genre.Name, recency);
             }
 
             // Genre pair weights
-            var genres = item.Genre.Select(g => g.Name).Where(n => !string.IsNullOrEmpty(n)).OrderBy(g => g).ToList();
+            var genres = item.Genres.Select(g => g.Name).Where(n => !string.IsNullOrEmpty(n)).OrderBy(g => g).ToList();
             for (var i = 0; i < genres.Count; i++)
             {
                 for (var j = i + 1; j < genres.Count; j++)
@@ -54,13 +54,13 @@ public class TasteProfile
             }
 
             // Director weights
-            foreach (var director in item.Director)
+            foreach (var director in item.Directors)
             {
                 AddWeight(profile.DirectorWeights, director.Name, recency);
             }
 
             // Actor weights
-            foreach (var actor in item.Role.Take(5)) // top-billed actors
+            foreach (var actor in item.Roles.Take(5)) // top-billed actors
             {
                 AddWeight(profile.ActorWeights, actor.Name, recency);
             }

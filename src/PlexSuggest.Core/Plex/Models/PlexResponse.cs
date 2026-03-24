@@ -104,13 +104,17 @@ public record Metadata
     public int? LeafCount { get; init; }
 
     [JsonPropertyName("Genre")]
-    public List<Tag> Genre { get; init; } = [];
+    public List<Tag>? Genre { get; init; }
 
     [JsonPropertyName("Director")]
-    public List<Tag> Director { get; init; } = [];
+    public List<Tag>? Director { get; init; }
 
     [JsonPropertyName("Role")]
-    public List<Tag> Role { get; init; } = [];
+    public List<Tag>? Role { get; init; }
+
+    [JsonIgnore] public IReadOnlyList<Tag> Genres => Genre ?? [];
+    [JsonIgnore] public IReadOnlyList<Tag> Directors => Director ?? [];
+    [JsonIgnore] public IReadOnlyList<Tag> Roles => Role ?? [];
 
     [JsonPropertyName("viewedAt")]
     public long? ViewedAt { get; init; }

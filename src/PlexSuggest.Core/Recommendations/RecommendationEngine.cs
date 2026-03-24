@@ -40,8 +40,8 @@ public static class RecommendationEngine
             if (genres.Length != 2) continue;
 
             var matching = unwatchedItems
-                .Where(item => item.Genre.Any(g => string.Equals(g.Name, genres[0], StringComparison.OrdinalIgnoreCase))
-                            && item.Genre.Any(g => string.Equals(g.Name, genres[1], StringComparison.OrdinalIgnoreCase)))
+                .Where(item => item.Genres.Any(g => string.Equals(g.Name, genres[0], StringComparison.OrdinalIgnoreCase))
+                            && item.Genres.Any(g => string.Equals(g.Name, genres[1], StringComparison.OrdinalIgnoreCase)))
                 .Select(item => ScoreItem(item, profile, $"Matches your love of {genres[0]} and {genres[1]}"))
                 .OrderByDescending(s => s.Score)
                 .Take(MaxItemsPerCategory)
@@ -107,12 +107,12 @@ public static class RecommendationEngine
             .OrderByDescending(kv => kv.Value)
             .Select(kv => kv.Key)
             .FirstOrDefault(dir =>
-                unwatchedItems.Count(i => i.Director.Any(d => string.Equals(d.Name, dir, StringComparison.OrdinalIgnoreCase))) >= 3);
+                unwatchedItems.Count(i => i.Directors.Any(d => string.Equals(d.Name, dir, StringComparison.OrdinalIgnoreCase))) >= 3);
 
         if (topDirector != null)
         {
             var dirItems = unwatchedItems
-                .Where(item => item.Director.Any(d => string.Equals(d.Name, topDirector, StringComparison.OrdinalIgnoreCase)))
+                .Where(item => item.Directors.Any(d => string.Equals(d.Name, topDirector, StringComparison.OrdinalIgnoreCase)))
                 .Select(item => ScoreItem(item, profile, $"Directed by {topDirector}"))
                 .OrderByDescending(s => s.Score)
                 .Take(MaxItemsPerCategory)
@@ -177,20 +177,20 @@ public static class RecommendationEngine
         var genreScore = GenreMatchScore(item, profile);
         score += genreScore * 40;
         if (genreScore > 0.5)
-            reasons.Add($"Genres you enjoy ({string.Join(", ", item.Genre.Where(g => !string.IsNullOrEmpty(g.Name)).Select(g => g.Name).Take(3))})");
+            reasons.Add($"Genres you enjoy ({string.Join(", ", item.Genres.Where(g => !string.IsNullOrEmpty(g.Name)).Select(g => g.Name).Take(3))})");
 
         // Director match: 15pts
-        var dirScore = item.Director
+        var dirScore = item.Directors
             .Where(d => !string.IsNullOrEmpty(d.Name))
             .Select(d => profile.DirectorWeights.GetValueOrDefault(d.Name))
             .DefaultIfEmpty(0)
             .Max();
         score += dirScore * 15;
-        if (dirScore > 0.3 && item.Director.Any(d => !string.IsNullOrEmpty(d.Name)))
-            reasons.Add($"Director: {item.Director.First(d => !string.IsNullOrEmpty(d.Name)).Name}");
+        if (dirScore > 0.3 && item.Directors.Any(d => !string.IsNullOrEmpty(d.Name)))
+            reasons.Add($"Director: {item.Directors.First(d => !string.IsNullOrEmpty(d.Name)).Name}");
 
         // Actor match: 15pts
-        var actorScore = item.Role
+        var actorScore = item.Roles
             .Where(a => !string.IsNullOrEmpty(a.Name))
             .Select(a => profile.ActorWeights.GetValueOrDefault(a.Name))
             .DefaultIfEmpty(0)
@@ -198,7 +198,7 @@ public static class RecommendationEngine
         score += actorScore * 15;
         if (actorScore > 0.3)
         {
-            var topActor = item.Role
+            var topActor = item.Roles
                 .Where(a => !string.IsNullOrEmpty(a.Name))
                 .OrderByDescending(a => profile.ActorWeights.GetValueOrDefault(a.Name))
                 .FirstOrDefault();
@@ -230,8 +230,8 @@ public static class RecommendationEngine
         var reasons = new List<string>();
 
         // Shared genres
-        var seedGenres = seed.Genre.Where(g => !string.IsNullOrEmpty(g.Name)).Select(g => g.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
-        var sharedGenres = item.Genre.Where(g => !string.IsNullOrEmpty(g.Name) && seedGenres.Contains(g.Name)).Select(g => g.Name).ToList();
+        var seedGenres = seed.Genres.Where(g => !string.IsNullOrEmpty(g.Name)).Select(g => g.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var sharedGenres = item.Genres.Where(g => !string.IsNullOrEmpty(g.Name) && seedGenres.Contains(g.Name)).Select(g => g.Name).ToList();
         if (sharedGenres.Count > 0 && seedGenres.Count > 0)
         {
             score += (double)sharedGenres.Count / seedGenres.Count * 40;
@@ -239,16 +239,16 @@ public static class RecommendationEngine
         }
 
         // Shared director
-        var seedDirs = seed.Director.Where(d => !string.IsNullOrEmpty(d.Name)).Select(d => d.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
-        if (item.Director.Any(d => !string.IsNullOrEmpty(d.Name) && seedDirs.Contains(d.Name)))
+        var seedDirs = seed.Directors.Where(d => !string.IsNullOrEmpty(d.Name)).Select(d => d.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (item.Directors.Any(d => !string.IsNullOrEmpty(d.Name) && seedDirs.Contains(d.Name)))
         {
             score += 20;
             reasons.Add("Same director");
         }
 
         // Shared actors
-        var seedActors = seed.Role.Where(a => !string.IsNullOrEmpty(a.Name)).Select(a => a.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
-        var sharedActors = item.Role.Where(a => !string.IsNullOrEmpty(a.Name) && seedActors.Contains(a.Name)).Select(a => a.Name).Take(3).ToList();
+        var seedActors = seed.Roles.Where(a => !string.IsNullOrEmpty(a.Name)).Select(a => a.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var sharedActors = item.Roles.Where(a => !string.IsNullOrEmpty(a.Name) && seedActors.Contains(a.Name)).Select(a => a.Name).Take(3).ToList();
         if (sharedActors.Count > 0)
         {
             score += Math.Min(sharedActors.Count * 5, 15);
@@ -274,7 +274,7 @@ public static class RecommendationEngine
 
     static double GenreMatchScore(Metadata item, TasteProfile profile)
     {
-        var genres = item.Genre.Where(g => !string.IsNullOrEmpty(g.Name)).ToList();
+        var genres = item.Genres.Where(g => !string.IsNullOrEmpty(g.Name)).ToList();
         if (genres.Count == 0) return 0;
         return genres
             .Select(g => profile.GenreWeights.GetValueOrDefault(g.Name))
