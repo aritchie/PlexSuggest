@@ -1,18 +1,27 @@
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PlexSuggest.Core.Configuration;
 using PlexSuggest.Core.Plex;
 using PlexSuggest.Core.Plex.Models;
+using PlexSuggest.Maui.Pages;
+using Shiny;
 
 namespace PlexSuggest.Maui.ViewModels;
 
-public partial class LibraryPickerViewModel : ObservableObject
+[ShellMap<LibraryPickerPage>("library")]
+public partial class LibraryPickerViewModel(INavigator navigator) : ObservableObject, IPageLifecycleAware
 {
     [ObservableProperty] bool isBusy;
     [ObservableProperty] string statusMessage = "";
+    [ObservableProperty] List<LibrarySection> sections = [];
 
-    public ObservableCollection<LibrarySection> Sections { get; } = [];
+    public async void OnAppearing()
+    {
+        if (Sections.Count == 0)
+            await LoadSectionsAsync();
+    }
+
+    public void OnDisappearing() { }
 
     [RelayCommand]
     async Task LoadSectionsAsync()
@@ -31,11 +40,7 @@ public partial class LibraryPickerViewModel : ObservableObject
         {
             using var client = new PlexClient(config);
             var sections = await client.GetLibrarySectionsAsync();
-
-            Sections.Clear();
-            foreach (var s in sections)
-                Sections.Add(s);
-
+            Sections = [.. sections];
             StatusMessage = $"Found {sections.Count} libraries.";
         }
         catch (Exception ex)
@@ -51,11 +56,11 @@ public partial class LibraryPickerViewModel : ObservableObject
     [RelayCommand]
     async Task SelectSectionAsync(LibrarySection section)
     {
-        await Shell.Current.GoToAsync("categories", new Dictionary<string, object>
+        await navigator.NavigateTo<CategoriesViewModel>(vm =>
         {
-            ["SectionKey"] = section.Key,
-            ["SectionTitle"] = section.Title,
-            ["SectionType"] = section.Type
+            vm.SectionKey = section.Key;
+            vm.SectionTitle = section.Title;
+            vm.SectionType = section.Type;
         });
     }
 }

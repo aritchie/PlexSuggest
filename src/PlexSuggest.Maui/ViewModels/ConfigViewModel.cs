@@ -1,14 +1,17 @@
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PlexSuggest.Core.Configuration;
 using PlexSuggest.Core.Plex;
+using PlexSuggest.Maui.Pages;
+using Shiny;
 
 namespace PlexSuggest.Maui.ViewModels;
 
-public partial class ConfigViewModel : ObservableObject
+[ShellMap<ConfigPage>(registerRoute: false)]
+public partial class ConfigViewModel(INavigator navigator, IDialogs dialogs) : ObservableObject,
+    IPageLifecycleAware
 {
-    [ObservableProperty] ObservableCollection<ServerEntry> servers = [];
+    [ObservableProperty] List<ServerEntry> servers = [];
     [ObservableProperty] bool hasServers;
     [ObservableProperty] bool showAddForm;
 
@@ -20,15 +23,13 @@ public partial class ConfigViewModel : ObservableObject
     [ObservableProperty] string statusMessage = "";
     [ObservableProperty] bool isBusy;
 
-    public ConfigViewModel()
-    {
-        LoadServers();
-    }
+    public void OnAppearing() => LoadServers();
+    public void OnDisappearing() { }
 
     void LoadServers()
     {
         var config = ConfigManager.LoadConfig();
-        Servers = new ObservableCollection<ServerEntry>(config.Servers);
+        Servers = [.. config.Servers];
         HasServers = Servers.Count > 0;
         ShowAddForm = !HasServers;
     }
@@ -55,7 +56,7 @@ public partial class ConfigViewModel : ObservableObject
             ConfigManager.SetLastServer(server.Id);
             StatusMessage = $"Connected to: {name}";
 
-            await Shell.Current.GoToAsync("library");
+            await navigator.NavigateTo<LibraryPickerViewModel>();
         }
         catch (Exception ex)
         {
@@ -100,7 +101,7 @@ public partial class ConfigViewModel : ObservableObject
             Description = "";
             LoadServers();
 
-            await Shell.Current.GoToAsync("library");
+            await navigator.NavigateTo<LibraryPickerViewModel>();
         }
         catch (Exception ex)
         {
@@ -132,11 +133,9 @@ public partial class ConfigViewModel : ObservableObject
     [RelayCommand]
     async Task RemoveServerAsync(ServerEntry server)
     {
-        var confirm = await Shell.Current.DisplayAlertAsync(
+        var confirm = await dialogs.Confirm(
             "Remove Server",
-            $"Remove \"{(string.IsNullOrWhiteSpace(server.Name) ? server.ServerUrl : server.Name)}\"?",
-            "Remove",
-            "Cancel");
+            $"Remove \"{(string.IsNullOrWhiteSpace(server.Name) ? server.ServerUrl : server.Name)}\"?");
 
         if (!confirm) return;
 
@@ -149,7 +148,7 @@ public partial class ConfigViewModel : ObservableObject
     void ResetAll()
     {
         ConfigManager.Delete();
-        Servers.Clear();
+        Servers = [];
         HasServers = false;
         ShowAddForm = true;
         ServerUrl = "";

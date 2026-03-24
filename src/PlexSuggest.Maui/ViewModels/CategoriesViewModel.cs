@@ -1,24 +1,40 @@
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PlexSuggest.Core.Configuration;
 using PlexSuggest.Core.Plex;
 using PlexSuggest.Core.Recommendations;
+using PlexSuggest.Maui.Pages;
+using Shiny;
 
 namespace PlexSuggest.Maui.ViewModels;
 
-[QueryProperty(nameof(SectionKey), "SectionKey")]
-[QueryProperty(nameof(SectionTitle), "SectionTitle")]
-[QueryProperty(nameof(SectionType), "SectionType")]
-public partial class CategoriesViewModel : ObservableObject
+[ShellMap<CategoriesPage>("categories")]
+public partial class CategoriesViewModel(INavigator navigator) : ObservableObject,
+    IPageLifecycleAware
 {
-    [ObservableProperty] string sectionKey = "";
-    [ObservableProperty] string sectionTitle = "";
-    [ObservableProperty] string sectionType = "";
+    [ObservableProperty]
+    [property: ShellProperty]
+    string sectionKey = "";
+
+    [ObservableProperty]
+    [property: ShellProperty]
+    string sectionTitle = "";
+
+    [ObservableProperty]
+    [property: ShellProperty]
+    string sectionType = "";
+
     [ObservableProperty] bool isBusy;
     [ObservableProperty] string statusMessage = "";
+    [ObservableProperty] List<Category> categories = [];
 
-    public ObservableCollection<Category> Categories { get; } = [];
+    public async void OnAppearing()
+    {
+        if (Categories.Count == 0)
+            await LoadCategoriesAsync();
+    }
+
+    public void OnDisappearing() { }
 
     [RelayCommand]
     async Task LoadCategoriesAsync()
@@ -51,13 +67,9 @@ public partial class CategoriesViewModel : ObservableObject
             }
 
             var profile = TasteProfile.Build(watched, history);
-            var categories = RecommendationEngine.GenerateCategories(profile, unwatched);
+            Categories = RecommendationEngine.GenerateCategories(profile, unwatched);
 
-            Categories.Clear();
-            foreach (var c in categories)
-                Categories.Add(c);
-
-            StatusMessage = $"Found {watched.Count} watched, {unwatched.Count} unwatched. Generated {categories.Count} categories.";
+            StatusMessage = $"Found {watched.Count} watched, {unwatched.Count} unwatched. Generated {Categories.Count} categories.";
         }
         catch (Exception ex)
         {
@@ -72,9 +84,6 @@ public partial class CategoriesViewModel : ObservableObject
     [RelayCommand]
     async Task SelectCategoryAsync(Category category)
     {
-        await Shell.Current.GoToAsync("recommendations", new Dictionary<string, object>
-        {
-            ["Category"] = category
-        });
+        await navigator.NavigateTo<RecommendationsViewModel>(vm => vm.Category = category);
     }
 }

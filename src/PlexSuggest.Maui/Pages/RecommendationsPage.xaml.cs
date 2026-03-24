@@ -1,12 +1,9 @@
-using PlexSuggest.Maui.ViewModels;
-
 namespace PlexSuggest.Maui.Pages;
 
 public partial class RecommendationsPage : ContentPage
 {
-    public RecommendationsPage(RecommendationsViewModel vm)
+    public RecommendationsPage()
     {
         InitializeComponent();
-        BindingContext = vm;
     }
 }

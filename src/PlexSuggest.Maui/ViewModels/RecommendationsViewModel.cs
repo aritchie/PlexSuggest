@@ -1,26 +1,25 @@
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PlexSuggest.Core.Recommendations;
+using PlexSuggest.Maui.Pages;
+using Shiny;
 
 namespace PlexSuggest.Maui.ViewModels;
 
-[QueryProperty(nameof(Category), "Category")]
-public partial class RecommendationsViewModel : ObservableObject
+[ShellMap<RecommendationsPage>("recommendations")]
+public partial class RecommendationsViewModel(INavigator navigator) : ObservableObject
 {
-    [ObservableProperty] Category? category;
+    [ObservableProperty]
+    [property: ShellProperty]
+    Category? category;
+
     [ObservableProperty] ScoredItem? selectedItem;
     [ObservableProperty] bool showDetail;
-
-    public ObservableCollection<ScoredItem> Items { get; } = [];
+    [ObservableProperty] List<ScoredItem> items = [];
 
     partial void OnCategoryChanged(Category? value)
     {
-        Items.Clear();
-        if (value is null) return;
-
-        foreach (var item in value.Items)
-            Items.Add(item);
+        Items = value is null ? [] : [.. value.Items];
     }
 
     [RelayCommand]
@@ -39,6 +38,6 @@ public partial class RecommendationsViewModel : ObservableObject
     [RelayCommand]
     async Task GoBackAsync()
     {
-        await Shell.Current.GoToAsync("..");
+        await navigator.GoBack();
     }
 }
